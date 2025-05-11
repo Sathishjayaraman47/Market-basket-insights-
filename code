@@ -1,0 +1,64 @@
+# DATA PREPROCESSING
+
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+#import the Dataset
+data=pd.read_csv("DATASET.csv")
+print(data)
+
+#display the first few rows of the dataset to get an overview
+print(data.head(10))
+
+#Get basic statistics about the dataset
+summary=data.describe()
+print(summary)
+
+# Check for missing values
+missing_values = data.isnull().sum()
+print(missing_values)
+
+
+# If there are missing values, you may choose to drop rows with missing data
+data.dropna()
+
+# Check for duplicates based on all columns
+duplicates = data.duplicated()
+print("Number of duplicate rows:", duplicates.sum())
+
+# Remove duplicate rows
+data.drop_duplicates()
+
+
+# ASSOCIATION ANALYSIS TECHNQUIES
+
+
+#use Apriori algorithm in data mining using association rules
+
+from mlxtend.frequent_patterns import apriori 
+from mlxtend.frequent_patterns import association_rules
+transactions=data.groupby(["CustomerID","Itemname"]).sum().unstack().reset_index().set_index("CustomerID")
+print(transactions)
+
+#use Apriori algorithm in data mining using association rules for few values
+print(transactions.head(10))
+
+#DATA VISUALISATION
+
+
+#Bar chart for top 10 sold items in dataset
+
+Item_distr=data.groupby(by="Itemname").size().reset_index(name="Frequency").sort_values(by="Frequency", ascending=False).head(10)
+bars=Item_distr["Itemname"]
+height=Item_distr["Frequency"]
+x_pos=np.arange(len(bars))
+plt.figure(figsize=(16,9))
+plt.bar(x_pos, height, color=(0.2,0.3,0.5,0.5))
+plt.title("Top 10 sold item")
+plt.xlabel("Item names")
+plt.ylabel('numer of quantity sold')
+plt.xticks(x_pos, bars)
+plt.show()
+
